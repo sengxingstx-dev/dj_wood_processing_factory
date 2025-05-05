@@ -1,0 +1,109 @@
+{% extends "core/dashboard/base.html" %}
+{% load static %}
+{% block title %}
+  Admin | View Order #{{ order.order_number }}
+{% endblock title %}
+{% block admincontent %}
+  <style>
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+    #printable-content, #printable-content * {
+      visibility: visible;
+    }
+    #printable-content {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+    .no-print {
+      display: none;
+    }
+  }
+  </style>
+  <div class="mt-14">
+    <div id="printable-content"
+         class="container mx-auto p-6 bg-white shadow-lg rounded-lg">
+      <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-gray-800">Order #{{ order.order_number }}</h1>
+        <div class="space-x-2 no-print">
+          <button onclick="window.print()"
+                  class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300">
+            Print
+          </button>
+          <a href="{% url 'generate_order_pdf' order.id %}"
+             class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300">
+            Generate PDF
+          </a>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="bg-gray-100 p-4 rounded-lg">
+          <h2 class="text-xl font-semibold mb-2 text-gray-700">Order Information</h2>
+          <p>
+            <span class="font-medium">Client:</span> {{ order.client.name }}
+          </p>
+          <p>
+            <span class="font-medium">Payment Method:</span> {{ order.payment_method }}
+          </p>
+          <p>
+            <span class="font-medium">Status:</span>
+            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {% if order.status == 'pending' %}bg-yellow-100 text-yellow-800 {% elif order.status == 'completed' %}bg-green-100 text-green-800 {% else %}bg-red-100 text-red-800{% endif %}">
+              {{ order.status }}
+            </span>
+          </p>
+        </div>
+        <div class="bg-gray-100 p-4 rounded-lg">
+          <h2 class="text-xl font-semibold mb-2 text-gray-700">Order Details</h2>
+          <p>
+            <span class="font-medium">Total Cost:</span> LAK{{ order.total_cost }}
+          </p>
+          <p>
+            <span class="font-medium">Created At:</span> {{ order.created_at|date:'d/m/Y' }}
+          </p>
+          <p>
+            <span class="font-medium">Updated At:</span> {{ order.updated_at|date:'d/m/Y' }}
+          </p>
+        </div>
+      </div>
+      {% if order.description %}
+        <div class="mb-6 bg-blue-50 p-4 rounded-lg">
+          <h2 class="text-xl font-semibold mb-2 text-gray-700">Description</h2>
+          <p>{{ order.description }}</p>
+        </div>
+      {% endif %}
+      <h2 class="text-2xl font-bold mb-4 text-gray-800">Order Items</h2>
+      <div class="overflow-x-auto bg-white shadow-md rounded-lg">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Wood Inventory</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price/Unit</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Price</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            {% for detail in order_details %}
+              <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">{{ forloop.counter }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ detail.wood_inventory.wood_type }} - {{ detail.wood_inventory.grade }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ detail.qty }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">LAK{{ detail.price_per_unit }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">LAK{{ detail.total_price }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-6 text-right no-print">
+        <a href="{% url 'manage-orders' %}"
+           class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded transition duration-300">
+          Back to Orders
+        </a>
+      </div>
+    </div>
+  </div>
+{% endblock admincontent %}
