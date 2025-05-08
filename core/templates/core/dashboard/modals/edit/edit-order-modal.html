@@ -9,7 +9,7 @@
     <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
       <!-- Modal header -->
       <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Edit Order #{{ order.order_number }}</h3>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">ແກ້ໄຂອໍເດີ #{{ order.order_number }}</h3>
         <button type="button"
                 class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                 data-modal-toggle="edit-order-modal-{{ order.id }}">
@@ -31,7 +31,7 @@
         <div class="grid gap-4 mb-4 grid-cols-2">
           <div class="col-span-2">
             <label for="client"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Client</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ລູກຄ້າ</label>
             <select id="client"
                     name="client"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
@@ -44,14 +44,14 @@
             </select>
           </div>
           <div class="col-span-2">
-            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Order Details</label>
+            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ລາຍການອໍເດີ</label>
             <div id="order-details-container-edit">
               {% for detail in order.orderdetail_set.all %}
                 <div class="order-detail-row grid grid-cols-5 gap-4 mb-4"
                      data-detail-id="{{ detail.id }}">
                   <div>
                     <label for="wood_inventory_{{ detail.id }}"
-                           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Wood Inventory</label>
+                           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ໄມ້</label>
                     <select name="wood_inventory"
                             id="wood_inventory_{{ detail.id }}"
                             class="wood-inventory-select bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
@@ -67,7 +67,7 @@
                   </div>
                   <div>
                     <label for="qty_{{ detail.id }}"
-                           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Quantity</label>
+                           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ຈຳນວນ</label>
                     <input type="number"
                            name="qty"
                            id="qty_{{ detail.id }}"
@@ -78,7 +78,7 @@
                   </div>
                   <div>
                     <label for="price_per_unit_{{ detail.id }}"
-                           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price/Unit</label>
+                           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ລາຄາ/ອັນ</label>
                     <input type="number"
                            name="price_per_unit"
                            id="price_per_unit_{{ detail.id }}"
@@ -89,7 +89,7 @@
                   </div>
                   <div>
                     <label for="total_price_{{ detail.id }}"
-                           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Total Price</label>
+                           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ລວມ</label>
                     <input type="number"
                            name="total_price"
                            id="total_price_{{ detail.id }}"
@@ -116,12 +116,12 @@
             <button type="button"
                     id="add-order-detail-row-edit"
                     class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-              Add Item
+              ເພີ່ມລາຍການ
             </button>
           </div>
           <div class="col-span-2">
             <label for="payment_method"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Payment Method</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ວິທີຊຳລະ</label>
             <select id="payment_method"
                     name="payment_method"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
@@ -135,7 +135,7 @@
           </div>
           <div class="col-span-2">
             <label for="description"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ຄຳອະທິບາຍ</label>
             <textarea id="description"
                       name="description"
                       rows="4"
@@ -144,7 +144,7 @@
           </div>
           <div class="col-span-2">
             <label for="status"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ສະຖານະ</label>
             <select id="status"
                     name="status"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
@@ -167,7 +167,7 @@
             <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd">
             </path>
           </svg>
-          Update Order
+          ແກ້ໄຂ
         </button>
       </form>
     </div>

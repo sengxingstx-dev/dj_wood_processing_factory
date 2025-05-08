@@ -10,7 +10,7 @@
       {% csrf_token %}
       <!-- Modal header -->
       <div class="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
-        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Edit</h3>
+        <h3 class="text-xl font-semibold text-gray-900 dark:text-white">ແກ້ໄຂ</h3>
         <button type="button"
                 class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                 data-modal-hide="editWoodModal-{{ wood.id }}">
@@ -29,7 +29,7 @@
         <div class="grid grid-cols-2 gap-6">
           <div class="col-span-2">
             <label for="wood_type"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Wood type</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ປະເພດໄມ້</label>
             <select id="wood_type"
                     name="wood_type"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
@@ -41,7 +41,7 @@
           </div>
           <div class="col-span-2">
             <label for="grade"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Grade</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ເກຣດ</label>
             <select id="grade"
                     name="grade"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
@@ -52,7 +52,7 @@
           </div>
           <div class="col-span-2">
             <label for="arrival_date"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Arrival Date</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ວັນທີ່ຮອດໂຮງງານ</label>
             <div class="relative max-w-sm">
               <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                 <svg class="w-4 h-4 text-gray-500 dark:text-gray-400"
@@ -78,7 +78,7 @@
           </div>
           <div class="col-span-2">
             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                   for="image">Upload file</label>
+                   for="image">ເລືອກປະເພດໄມ້</label>
             <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
                    id="image"
                    name="image"
@@ -86,7 +86,7 @@
           </div>
           <div class="col-span-2">
             <label for="quantity"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Quantity:</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ຈຳນວນ:</label>
             <input type="number"
                    id="quantity"
                    name="quantity"
@@ -97,7 +97,7 @@
           </div>
           <div class="col-span-2">
             <label for="unit_price"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Unit price:</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ລາຄາຕໍ່ຫົວໜ່ວຍ:</label>
             <input type="number"
                    id="unit_price"
                    name="unit_price"
@@ -108,7 +108,7 @@
           </div>
           <div class="col-span-2">
             <label for="source"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Source</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ແຫຼ່ງທີ່ມາ</label>
             <textarea id="source"
                       name="source"
                       rows="4"
@@ -117,7 +117,7 @@
           </div>
           <div class="col-span-2">
             <label for="status"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ສະຖານະ</label>
             <select id="status"
                     name="status"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
@@ -133,7 +133,7 @@
       <div class="flex items-center p-6 space-x-3 rtl:space-x-reverse border-t border-gray-200 rounded-b dark:border-gray-600">
         <button type="submit"
                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-          Update
+          ແກ້ໄຂ
         </button>
       </div>
     </form>

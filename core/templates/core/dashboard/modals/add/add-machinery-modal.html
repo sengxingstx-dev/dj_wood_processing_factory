@@ -7,7 +7,7 @@
     <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
       <!-- Modal header -->
       <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Create New Machinery</h3>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">ເພີ່ມເຄື່ອງຈັກ</h3>
         <button type="button"
                 class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                 data-modal-toggle="crud-modal">
@@ -29,7 +29,7 @@
         <div class="grid gap-4 mb-4 grid-cols-2">
           <div class="col-span-2">
             <label for="name"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ຊື່</label>
             <input type="text"
                    name="name"
                    id="name"
@@ -39,7 +39,7 @@
           </div>
           <div class="col-span-2">
             <label for="purchase_date"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Purchase Date</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ວັນທີ່ຊື້</label>
             <div class="relative max-w-sm">
               <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                 <svg class="w-4 h-4 text-gray-500 dark:text-gray-400"
@@ -61,7 +61,7 @@
           </div>
           <div class="col-span-2">
             <label for="last_maintenance_date"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Last Maintenance Date</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ວັນທີ່ບຳລຸງຮັກສາລ່າສຸດ</label>
             <div class="relative max-w-sm">
               <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                 <svg class="w-4 h-4 text-gray-500 dark:text-gray-400"
@@ -83,11 +83,11 @@
           </div>
           <div class="col-span-2">
             <label for="processing_unit"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Processing Unit</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ຫົວໜ່ວຍ</label>
             <select id="processing_unit"
                     name="processing_unit"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-              <option selected>Choose a processing unit</option>
+              <option selected>ເລືອກຫົວໜ່ວຍ</option>
               {% if processing_units %}
                 {% for unit in processing_units %}
                   <option value="{{ unit.id }}">{{ unit.name }} - {{ unit.capacity }}</option>
@@ -99,7 +99,7 @@
           </div>
           <div class="col-span-2">
             <label for="description"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ຄຳອະທິບາຍ</label>
             <textarea id="description"
                       name="description"
                       rows="4"
@@ -108,11 +108,11 @@
           </div>
           <div class="col-span-2">
             <label for="status"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ສະຖານະ</label>
             <select id="status"
                     name="status"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-              <option selected>Choose status</option>
+              <option selected>ເລືອກສະຖານະ</option>
               <option value="Operational">Operational</option>
               <option value="Maintenance">Maintenance</option>
               <option value="Non-functional">Non-functional</option>
@@ -128,7 +128,7 @@
             <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd">
             </path>
           </svg>
-          Add
+          ເພີ່ມ
         </button>
       </form>
     </div>

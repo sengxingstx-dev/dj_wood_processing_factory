@@ -7,7 +7,7 @@
     <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
       <!-- Modal header -->
       <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Create New Production Log</h3>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">ເພີ່ມໄມ້ຜະລິດ</h3>
         <button type="button"
                 class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                 data-modal-toggle="crud-modal">
@@ -29,11 +29,11 @@
         <div class="grid gap-4 mb-4 grid-cols-2">
           <div class="col-span-2">
             <label for="employee"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Employee</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ພະນັກງານ</label>
             <select id="employee"
                     name="employee"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-              <option selected>Choose an employee</option>
+              <option selected>ເລືອກພະນັກງານ</option>
               {% if employees %}
                 {% for emp in employees %}
                   <option value="{{ emp.id }}">{{ emp.name }}</option>
@@ -45,11 +45,11 @@
           </div>
           <div class="col-span-2">
             <label for="wood_inventory"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Wood inventory</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ໄມ້</label>
             <select id="wood_inventory"
                     name="wood_inventory"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-              <option selected>Choose a wood inventory</option>
+              <option selected>ເລືອກໄມ້</option>
               {% if wood_inventories %}
                 {% for wood_inventory in wood_inventories %}
                   <option value="{{ wood_inventory.id }}">{{ wood_inventory.wood_type }} - {{ wood_inventory.grade }} - {{ wood_inventory.source }}</option>
@@ -61,7 +61,7 @@
           </div>
           <div class="col-span-2">
             <label for="processing_date"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Processing Date</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ວັນທີ່ຜະລິດ</label>
             <div class="relative max-w-sm">
               <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                 <svg class="w-4 h-4 text-gray-500 dark:text-gray-400"
@@ -83,7 +83,7 @@
           </div>
           <div class="col-span-2">
             <label for="quantity_processed"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Quantity processed:</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ຈຳນວນຜະລິດ:</label>
             <input type="number"
                    id="quantity_processed"
                    name="quantity_processed"
@@ -94,11 +94,11 @@
           </div>
           <div class="col-span-2">
             <label for="processing_unit"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Processing Unit</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ຫົວໜ່ວຍ</label>
             <select id="processing_unit"
                     name="processing_unit"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-              <option selected>Choose a processing unit</option>
+              <option selected>ເລືອກຫົວໜ່ວຍ</option>
               {% if processing_units %}
                 {% for unit in processing_units %}
                   <option value="{{ unit.id }}">{{ unit.name }} - {{ unit.capacity }}</option>
@@ -110,7 +110,7 @@
           </div>
           <div class="col-span-2">
             <label for="remarks"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Remarks</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ໝາຍເຫດ</label>
             <textarea id="remarks"
                       name="remarks"
                       rows="4"
@@ -119,11 +119,11 @@
           </div>
           <div class="col-span-2">
             <label for="status"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Status</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ສະຖານະ</label>
             <select id="status"
                     name="status"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-              <option selected>Choose status</option>
+              <option selected>ເລືອກສະຖານະ</option>
               <option value="Comleted">Comleted</option>
               <option value="In-Progress">In-Progress</option>
               <option value="Faulty">Faulty</option>
@@ -139,7 +139,7 @@
             <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd">
             </path>
           </svg>
-          Add
+          ເພີ່ມ
         </button>
       </form>
     </div>

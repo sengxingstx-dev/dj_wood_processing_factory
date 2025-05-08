@@ -1,5 +1,6 @@
 {% extends "core/dashboard/base.html" %}
 {% load static %}
+{% load humanize %}
 {% block title %}
   Admin | Orders
 {% endblock title %}
@@ -19,7 +20,7 @@
               <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd">
               </path>
             </svg>
-            Add Order
+            ເພີ່ມອໍເດີ
           </button>
           <!-- Add order page -->
         </div>
@@ -45,13 +46,13 @@
       </div>
       <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-          <tr>
+          <tr class="lao-table-header">
             <th scope="col" class="px-6 py-3">#</th>
-            <th scope="col" class="px-6 py-3">Order Number</th>
-            <th scope="col" class="px-6 py-3">Order Date</th>
-            <th scope="col" class="px-6 py-3">Total Cost</th>
-            <th scope="col" class="px-6 py-3">Status</th>
-            <th scope="col" class="px-6 py-3">Action</th>
+            <th scope="col" class="px-6 py-3">ລະຫັດອໍເດີ</th>
+            <th scope="col" class="px-6 py-3">ວັນທີ່ອໍເດີ</th>
+            <th scope="col" class="px-6 py-3">ຈຳນວນເງິນທັງໝົດ</th>
+            <th scope="col" class="px-6 py-3">ສະຖານະ</th>
+            <th scope="col" class="px-6 py-3">ຈັດການ</th>
           </tr>
         </thead>
         <tbody>
@@ -61,7 +62,7 @@
                 <td class="px-6 py-4">{{ forloop.counter }}</td>
                 <td class="px-6 py-4">{{ order.order_number }}</td>
                 <td class="px-6 py-4">{{ order.created_at|date:"d-m-Y H:i" }}</td>
-                <td class="px-6 py-4">{{ order.total_cost }}</td>
+                <td class="px-6 py-4">{{ order.total_cost|intcomma }}</td>
                 <td class="px-6 py-4">
                   <div class="flex items-center">
                     {% if order.status == 'pending' %}
@@ -82,12 +83,12 @@
                 <td class="px-6 py-4">
                   <!-- Modal toggle -->
                   <a href="{% url 'view-order' order.id %}"
-                     class="font-medium mr-2 text-green-600 dark:text-green-500 hover:underline">View</a>
+                     class="font-medium mr-2 text-green-600 dark:text-green-500 hover:underline">ເບີ່ງ</a>
                   <a href="#"
                      type="button"
                      data-modal-target="edit-order-modal-{{ order.id }}"
                      data-modal-show="edit-order-modal-{{ order.id }}"
-                     class="font-medium text-blue-600 mr-2 dark:text-blue-500 hover:underline">Edit</a>
+                     class="font-medium text-blue-600 mr-2 dark:text-blue-500 hover:underline">ແກ້ໄຂ</a>
                   {% comment %} <button data-modal-target="edit-order-modal-{{ order.id }}" data-modal-toggle="edit-order-modal-{{ order.id }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</button> {% endcomment %}
                   <!-- Edit order modal -->
                   {% include "core/dashboard/modals/edit/edit-order-modal.html" %}
@@ -95,7 +96,7 @@
                      type="button"
                      data-modal-target="deletePopupModal-{{ order.id }}"
                      data-modal-show="deletePopupModal-{{ order.id }}"
-                     class="font-medium text-red-600 dark:text-red-500 hover:underline">Delete</a>
+                     class="font-medium text-red-600 dark:text-red-500 hover:underline">ລືບ</a>
                   <!-- Delete order modal -->
                   <form action="{% url 'delete-order' order.id %}" method="post">
                     {% csrf_token %}
@@ -106,7 +107,7 @@
             {% endfor %}
           {% else %}
             <tr class="bg-white text-center border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-              <td class="w-4 p-4" colspan="5">No data</td>
+              <td class="w-4 p-4" colspan="5">ບໍ່ມີຂໍ້ມູນ</td>
             </tr>
           {% endif %}
         </tbody>

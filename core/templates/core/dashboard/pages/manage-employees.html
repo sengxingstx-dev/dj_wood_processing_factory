@@ -19,7 +19,7 @@
               <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd">
               </path>
             </svg>
-            Add Employee
+            ເພີ່ມພະນັກງານ
           </button>
           {% comment %} Add employee modal {% endcomment %}
           {% include "core/dashboard/modals/add/add-employee-modal.html" %}
@@ -46,14 +46,14 @@
       </div>
       <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-          <tr>
+          <tr class="lao-table-header">
             <th scope="col" class="px-6 py-3">#</th>
-            <th scope="col" class="px-6 py-3">Profile</th>
-            <th scope="col" class="px-6 py-3">Name</th>
-            <th scope="col" class="px-6 py-3">Contact Number</th>
-            <th scope="col" class="px-6 py-3">Date Hired</th>
-            <th scope="col" class="px-6 py-3">Status</th>
-            <th scope="col" class="px-6 py-3">Action</th>
+            <th scope="col" class="px-6 py-3">ໂປຣໄຟ</th>
+            <th scope="col" class="px-6 py-3">ຊື່</th>
+            <th scope="col" class="px-6 py-3">ເບີໂທ</th>
+            <th scope="col" class="px-6 py-3">ວັນທີ່ຈ້າງງານ</th>
+            <th scope="col" class="px-6 py-3">ສະຖານະ</th>
+            <th scope="col" class="px-6 py-3">ຈັດການ</th>
           </tr>
         </thead>
         <tbody>
@@ -67,7 +67,7 @@
                        src="{% if user.avatar %} {{ user.avatar.url }} {% else %} {% static 'accounts/assets/images/default.jpg' %} {% endif %}"
                        width=""
                        height=""
-                       alt="Jese image">
+                       alt="image">
                 </th>
                 <th scope="row">
                   <div class="ps-3">
@@ -83,10 +83,10 @@
                   <div class="flex items-center">
                     {% if user.is_active %}
                       <div class="h-2.5 w-2.5 rounded-full bg-green-500 me-2"></div>
-                      Active
+                      ໃຊ້ງານໄດ້
                     {% else %}
                       <div class="h-2.5 w-2.5 rounded-full bg-red-500 me-2"></div>
-                      Inactive
+                      ໃຊ້ງານບໍ່ໄດ້
                     {% endif %}
                   </div>
                 </td>
@@ -96,12 +96,12 @@
                      type="button"
                      data-modal-target="editEmpModal-{{ emp.id }}"
                      data-modal-show="editEmpModal-{{ emp.id }}"
-                     class="font-medium text-blue-600 mr-2 dark:text-blue-500 hover:underline">Edit</a>
+                     class="font-medium text-blue-600 mr-2 dark:text-blue-500 hover:underline">ແກ້ໄຂ</a>
                   <a href="#"
                      type="button"
                      data-modal-target="deletePopupModal-{{ emp.id }}"
                      data-modal-show="deletePopupModal-{{ emp.id }}"
-                     class="font-medium text-red-600 dark:text-red-500 hover:underline">Delete</a>
+                     class="font-medium text-red-600 dark:text-red-500 hover:underline">ລືບ</a>
                   <!-- Edit employee modal -->
                   {% include "core/dashboard/modals/edit/edit-employee-modal.html" %}
 
@@ -115,7 +115,7 @@
             {% endfor %}
           {% else %}
             <tr class="bg-white text-center border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-              <td class="w-4 p-4" colspan="9">No data</td>
+              <td class="w-4 p-4" colspan="9">ບໍ່ມີຂໍ້ມູນ</td>
             </tr>
           {% endif %}
         </tbody>

@@ -9,7 +9,7 @@
     <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
       <!-- Modal header -->
       <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Add New Order</h3>
+        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">ເພີ່ມອໍເດີ</h3>
         <button type="button"
                 class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
                 data-modal-toggle="crud-modal">
@@ -29,26 +29,26 @@
         <div class="grid gap-4 mb-4 grid-cols-2">
           <div class="col-span-2">
             <label for="client"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Client</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ລູກຄ້າ</label>
             <select id="client"
                     name="client"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     required>
-              <option value="" selected>Select Client</option>
+              <option value="" selected>ເລືອກລູກຄ້າ</option>
               {% for client in clients %}<option value="{{ client.id }}">{{ client.name }}</option>{% endfor %}
             </select>
           </div>
           <div class="col-span-2">
-            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Order Details</label>
+            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ລາຍການອໍເດີ</label>
             <div id="order-details-container">
               <div class="order-detail-row grid grid-cols-4 gap-4 mb-4">
                 <div>
                   <label for="wood_inventory"
-                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Wood Inventory</label>
+                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ໄມ້</label>
                   <select name="wood_inventory"
                           class="wood-inventory-select bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                           required>
-                    <option value="" selected>Select Wood</option>
+                    <option value="" selected>ເລືອກໄມ້</option>
                     {% for wood in wood_inventories %}
                       <option value="{{ wood.id }}">{{ wood.wood_type }} - {{ wood.grade }}</option>
                     {% endfor %}
@@ -56,7 +56,7 @@
                 </div>
                 <div>
                   <label for="qty"
-                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Quantity</label>
+                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ຈຳນວນ</label>
                   <input type="number"
                          name="qty"
                          class="qty-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
@@ -65,7 +65,7 @@
                 </div>
                 <div>
                   <label for="price_per_unit"
-                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price/Unit</label>
+                         class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ລາຄາ/ອັນ</label>
                   <input type="number"
                          name="price_per_unit"
                          class="price-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
@@ -89,24 +89,24 @@
             <button type="button"
                     id="add-order-detail-row"
                     class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-              Add Item
+              ເພີ່ມລາຍການ
             </button>
           </div>
           <div class="col-span-2">
             <label for="payment_method"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Payment Method</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ວິທີຊຳລະ</label>
             <select id="payment_method"
                     name="payment_method"
                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                     required>
-              <option value="">Select Payment Method</option>
+              <option value="">ເລືອກວິທີຊຳລະ</option>
               <option value="cash" selected>Cash</option>
               <option value="transferred">Transferred</option>
             </select>
           </div>
           <div class="col-span-2">
             <label for="description"
-                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Description</label>
+                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ຄຳອະທິບາຍ</label>
             <textarea id="description"
                       name="description"
                       rows="4"
@@ -123,7 +123,7 @@
             <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd">
             </path>
           </svg>
-          Add new order
+          ເພີ່ມ
         </button>
       </form>
     </div>
