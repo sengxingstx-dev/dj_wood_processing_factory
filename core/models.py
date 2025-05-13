@@ -9,6 +9,8 @@ class WoodInventory(BaseModel):
     WOOD_TYPE_CHOICES = [
         ("Teak", "Teak"),
         ("Rosewood", "Rosewood"),
+        ("ໄມ້ປັກເກ້", "ໄມ້ປັກເກ້"),
+        ("ໄມ້ບົວ", "ໄມ້ບົວ"),
     ]
 
     GRADE_CHOICES = [

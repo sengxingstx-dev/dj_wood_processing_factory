@@ -1,4 +1,5 @@
 {% extends "core/clients/base.html" %}
+{% load static %}
 {% block title %}
   About
 {% endblock title %}
@@ -9,23 +10,22 @@
       <div class="flex items-start justify-start ">
         <div class="flex flex-col items-center h-[500px] border-gray-200 rounded-lg shadow md:flex-row md:w-full bg-gray-20 dark:border-gray-700 dark:bg-gray-800">
           <img class="object-cover w-full rounded-t-lg h-[5l400px] md:h-[500px] md:w-auto md:rounded-none md:rounded-s-lg"
-               src="https://www.flowbite.com/docs/images/blog/image-4.jpg"
+               src="{% static 'core/assets/images/image.png' %}"
                width=""
                height=""
                alt="">
           <div class="flex flex-col justify-between p-4 leading-normal">
-            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Who we are?</h5>
+            <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">ປະຫວັດຄວາມເປັນມາ</h5>
             <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
-              Here are the biggest enterprise technology acquisitions of 2021 so far, in reverse chronological order.
-              We are the 4S EV Club, the first and foremost electric vehicle club in Lao PDR. Our community comprises
-              a diverse group of electric vehicle enthusiasts, industry professionals, and advocates dedicated to
-              promoting and advancing the use of electric vehicles (EVs) in Laos. We are passionate about sustainability,
-              innovation, and the future of transportation.
+              ຂະແໜງປຸງແຕ່ງໄມ້ໂຮງງານປະສານເຫຼົ່າຫຼວງພະບາງ ໄດ້ສ້າງຕັ້ງຂື້ນ ແລະ ເປີດບໍລິການໃຫ້ແກ່ສາທາລະນະໃນວັນທີ 19/08/2001 
+              ໂດຍເລີມກໍ່ຕັ້ງເປັນທຸລະກິດພາຍໃນໂຮງງານປະສານເຫຼົ່າຫຼວງພະບາງ ໂດຍເຊີ່ງແມ່ນທ່ານ ອຸ່ນເຮືອນ ອຸໄທລີ ເປັນຜູ້ກໍ່ຕັ້ງ ແລະ 
+              ບໍລິຫານງານເປັນໂຮງງານປຸງແຕ່ງໄມ້ເຊີ່ງຈະສົ່ງອອກຫຼາຍຂະໜາດຮັບໃຊ້ໃຫ້ແກ່ລູກຄ້າ ທັງພາຍໃນ ແລະ ຕ່າງປະເທດ 
+              ສະຖານທີໂຮງງານປຸງແຕ່ງໄມ້ປະສານເຫຼົ່າຫຼວງພະບາງ ບ້ານ ຜາສຸກ ເມືອງ ແລະ ແຂວງ ຫຼວງພະບາງ
             </p>
           </div>
         </div>
       </div>
-      <div class="flex items-start grid grid-cols-2 gap-2 sm:grid-cols-1 md:grid-cols-2 ">
+      {% comment %} <div class="flex items-start grid grid-cols-2 gap-2 sm:grid-cols-1 md:grid-cols-2 ">
         <div class="w-full p-6 bg-white border mr-2 border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
           <svg class="w-7 h-7 text-gray-500 dark:text-gray-400 mb-3"
                aria-hidden="true"
@@ -78,7 +78,7 @@
             </svg>
           </a>
         </div>
-      </div>
+      </div> {% endcomment %}
     </section>
   </div>
 {% endblock clientcontent %}

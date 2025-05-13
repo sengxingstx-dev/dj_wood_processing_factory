@@ -1,5 +1,6 @@
 {% extends "core/clients/base.html" %}
 {% load static %}
+{% load humanize %}
 {% block title %}
   Home
 {% endblock title %}
@@ -37,7 +38,7 @@
           <svg class="w-4 h-4 mr-2 text-gray-500 dark:text-white-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
-          <span class="text-sm dark:text-white">LAK {{ wood.unit_price|floatformat:2 }}</span>
+          <span class="text-sm dark:text-white">LAK {{ wood.unit_price|intcomma }}</span>
         </div>
 
         <div class="col-span-2 flex items-center">
@@ -65,7 +66,7 @@
             {{ wood.status }}
           </span>
           <a href="#" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600">
-            Book Now
+            ຈອງ (ຕິດຕໍ່)
             <svg class="w-3.5 h-3.5 ml-2" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
             </svg>
