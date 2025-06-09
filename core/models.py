@@ -28,8 +28,8 @@ class WoodInventory(BaseModel):
     image = models.ImageField(upload_to=wood_inventory_storage, null=True, blank=True)
     wood_type = models.CharField(max_length=50, choices=WOOD_TYPE_CHOICES)
     grade = models.CharField(max_length=10, choices=GRADE_CHOICES)
-    quantity = models.FloatField()  # Stock quantity in cubic meters
-    unit_price = models.DecimalField(max_digits=10, decimal_places=2)  # Cost per unit
+    quantity = models.IntegerField(default=0)
+    unit_price = models.DecimalField(max_digits=10, decimal_places=0)  # Cost per unit
     source = models.CharField(max_length=100)  # Supplier or origin
     arrival_date = models.DateField()  # Stock arrival date
     status = models.CharField(max_length=20, choices=STATUS_CHOICES)
@@ -47,7 +47,7 @@ class ProcessingUnit(BaseModel):
 
     name = models.CharField(max_length=100)
     description = models.TextField()
-    capacity = models.FloatField()
+    capacity = models.IntegerField(default=0)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES)
 
     def __str__(self):
@@ -64,7 +64,7 @@ class ProductionLog(BaseModel):
     wood_inventory = models.ForeignKey(
         "WoodInventory", on_delete=models.CASCADE, related_name="production_logs_wood_inventory"
     )
-    quantity_processed = models.FloatField()
+    quantity_processed = models.IntegerField(default=0)
     processing_unit = models.ForeignKey(
         "ProcessingUnit", on_delete=models.CASCADE, related_name="production_logs_processing_unit"
     )
@@ -132,7 +132,7 @@ class Order(BaseModel):
         max_length=20, choices=PaymentMethod.choices, default=PaymentMethod.CASH
     )
     description = models.CharField(max_length=255, null=True, blank=True)
-    total_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    total_cost = models.DecimalField(max_digits=10, decimal_places=0, default=0)
 
     def __str__(self):
         return f"{self.order_number}"
@@ -142,8 +142,8 @@ class OrderDetail(BaseModel):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     wood_inventory = models.ForeignKey(WoodInventory, on_delete=models.CASCADE)
     qty = models.PositiveIntegerField(default=0)
-    price_per_unit = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    price_per_unit = models.DecimalField(max_digits=10, decimal_places=0, default=0)
+    total_price = models.DecimalField(max_digits=10, decimal_places=0, default=0)
 
     def __str__(self):
         return f"{self.order} ordered for {self.wood_inventory}"

@@ -22,6 +22,20 @@
             </svg>
             ເພີ່ມເຄື່ອງຈັກ
           </button>
+          {# --- Add Export to Excel Button Here --- #}
+          <a href="?{% if request.GET.search %}search={{ request.GET.search }}&{% endif %}export=excel"
+             class="text-white bg-green-500 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+            <svg class="me-1 -ms-1 w-5 h-5"
+                 fill="currentColor"
+                 viewBox="0 0 20 20"
+                 xmlns="http://www.w3.org/2000/svg"
+                 aria-hidden="true">
+              <path clip-rule="evenodd" fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v4.59L7.3 9.7a.75.75 0 00-1.1 1.02l3.25 3.5a.75.75 0 001.1 0l3.25-3.5a.75.75 0 10-1.1-1.02l-1.95 2.1V6.75z">
+              </path>
+            </svg>
+            ດາວໂຫລດ Excel
+          </a>
+          {# --- End Export Button --- #}
           <!-- Add unit modal -->
           {% include "core/dashboard/modals/add/add-machinery-modal.html" %}
         </div>
@@ -47,7 +61,7 @@
       </div>
       <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-          <tr>
+          <tr class="lao-table-header">
             <th scope="col" class="px-6 py-3">#</th>
             <th scope="col" class="px-6 py-3">ຊື່</th>
             <th scope="col" class="px-6 py-3">ຫົວໜ່ວຍ</th>

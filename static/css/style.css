@@ -11,5 +11,9 @@
 }
 
 .lao-table-header {
-  font-size: large;
+  font-size: medium;
+}
+
+.lao-table-header-sm {
+  font-size: small !important;
 }

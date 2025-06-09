@@ -4,9 +4,10 @@ from io import BytesIO
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.http import HttpResponse, JsonResponse, QueryDict
 from django.shortcuts import get_object_or_404, redirect, render
+from openpyxl import Workbook
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet
@@ -39,7 +40,10 @@ def custom_404_view(request, exception):
 
 
 def home(request):
-    wood_inventories = WoodInventory.objects.all().order_by("-updated_at")
+    # wood_inventories = WoodInventory.objects.all().order_by("-updated_at")
+    wood_inventories = WoodInventory.objects.filter(status__iexact="available").order_by(
+        "-updated_at"
+    )
     context = {
         "wood_inventories": wood_inventories,
     }
@@ -56,7 +60,39 @@ def contact(request):
 
 @login_required
 def dashboard(request):
-    return render(request, "core/dashboard/pages/dashboard.html")
+    total_users = Account.objects.count()
+    total_employees = Employee.objects.count()
+    total_clients = Client.objects.count()
+    total_wood_inventories = WoodInventory.objects.count()
+    total_wood_quantity = WoodInventory.objects.aggregate(Sum("quantity"))["quantity__sum"] or 0
+    total_processing_units = ProcessingUnit.objects.count()
+    total_production_logs = ProductionLog.objects.count()
+    total_orders = Order.objects.count()
+    total_revenue = (
+        Order.objects.filter(status=Order.OrderStatus.COMPLETED).aggregate(Sum("total_cost"))[
+            "total_cost__sum"
+        ]
+        or 0
+    )
+    recent_orders = Order.objects.order_by("-created_at")[:5]
+    low_stock_woods = WoodInventory.objects.filter(quantity__lt=10).order_by(
+        "quantity"
+    )  # Example: quantity less than 10
+
+    context = {
+        "total_users": total_users,
+        "total_employees": total_employees,
+        "total_clients": total_clients,
+        "total_wood_inventories": total_wood_inventories,
+        "total_wood_quantity": total_wood_quantity,
+        "total_processing_units": total_processing_units,
+        "total_production_logs": total_production_logs,
+        "total_orders": total_orders,
+        "total_revenue": total_revenue,
+        "recent_orders": recent_orders,
+        "low_stock_woods": low_stock_woods,
+    }
+    return render(request, "core/dashboard/pages/dashboard.html", context)
 
 
 @login_required
@@ -72,6 +108,42 @@ def manage_users(request):
     if query:
         # Search across multiple fields
         users = users.filter(Q(email__icontains=query))
+
+    if request.GET.get("export") == "excel":
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response["Content-Disposition"] = 'attachment; filename="users.xlsx"'
+
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = "Users"
+
+        headers = [
+            "ID",
+            "Email",
+            "Date Joined",
+            "Last Login",
+            "Is Active",
+            "Is Staff",
+        ]
+        for col_num, header_title in enumerate(headers, 1):
+            cell = sheet.cell(row=1, column=col_num)
+            cell.value = header_title
+
+        for row_num, user_obj in enumerate(users, 2):
+            sheet.cell(row=row_num, column=1).value = user_obj.id
+            sheet.cell(row=row_num, column=2).value = user_obj.email
+            sheet.cell(row=row_num, column=3).value = (
+                user_obj.date_joined.strftime("%Y-%m-%d %H:%M:%S") if user_obj.date_joined else ""
+            )
+            sheet.cell(row=row_num, column=4).value = (
+                user_obj.last_login.strftime("%Y-%m-%d %H:%M:%S") if user_obj.last_login else ""
+            )
+            sheet.cell(row=row_num, column=5).value = "Yes" if user_obj.is_active else "No"
+            sheet.cell(row=row_num, column=6).value = "Yes" if user_obj.is_staff else "No"
+        workbook.save(response)
+        return response
 
     msg = "Are you sure you want to delete this user?"
     context = {
@@ -101,6 +173,41 @@ def manage_employees(request):
     if query:
         # Search across multiple fields
         employees = employees.filter(Q(name__icontains=query) | Q(contact_number__icontains=query))
+
+    if request.GET.get("export") == "excel":
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response["Content-Disposition"] = 'attachment; filename="employees.xlsx"'
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = "Employees"
+
+        headers = [
+            "ID",
+            "Name",
+            "Email",
+            "Contact Number",
+            "Date Hired",
+            "User Active",
+        ]
+        for col_num, header_title in enumerate(headers, 1):
+            sheet.cell(row=1, column=col_num).value = header_title
+
+        for row_num, emp in enumerate(employees, 2):
+            sheet.cell(row=row_num, column=1).value = emp.id
+            sheet.cell(row=row_num, column=2).value = emp.name
+            sheet.cell(row=row_num, column=3).value = emp.user.email if emp.user else ""
+            sheet.cell(row=row_num, column=4).value = emp.contact_number
+            sheet.cell(row=row_num, column=5).value = (
+                emp.date_hired.strftime("%Y-%m-%d") if emp.date_hired else ""
+            )
+            sheet.cell(row=row_num, column=6).value = (
+                "Yes" if emp.user and emp.user.is_active else "No"
+            )
+
+        workbook.save(response)
+        return response
 
     if request.method == "POST":
         form = EmployeeForm(request.POST)
@@ -175,6 +282,33 @@ def manage_clients(request):
     else:
         clients = Client.objects.all().order_by("-updated_at")
 
+    if request.GET.get("export") == "excel":
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response["Content-Disposition"] = 'attachment; filename="clients.xlsx"'
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = "Clients"
+
+        headers = ["ID", "Name", "Contact Number", "Address", "Registration Date"]
+        for col_num, header_title in enumerate(headers, 1):
+            sheet.cell(row=1, column=col_num).value = header_title
+
+        for row_num, client_obj in enumerate(clients, 2):
+            sheet.cell(row=row_num, column=1).value = client_obj.id
+            sheet.cell(row=row_num, column=2).value = client_obj.name
+            sheet.cell(row=row_num, column=3).value = client_obj.contact_number
+            sheet.cell(row=row_num, column=4).value = client_obj.address
+            sheet.cell(row=row_num, column=5).value = (
+                client_obj.registration_date.strftime("%Y-%m-%d")
+                if client_obj.registration_date
+                else ""
+            )
+
+        workbook.save(response)
+        return response
+
     if request.method == "POST":
         form = ClientForm(request.POST)
         if form.is_valid():
@@ -233,6 +367,46 @@ def manage_wood_inventories(request):
             Q(wood_type__icontains=search_query) | Q(grade__contains=search_query)
         )
 
+    if request.GET.get("export") == "excel":
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response["Content-Disposition"] = 'attachment; filename="wood_inventories.xlsx"'
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = "Wood Inventories"
+
+        headers = [
+            "ID",
+            "Wood Type",
+            "Grade",
+            "Quantity (m³)",
+            "Unit Price (LAK)",
+            "Source",
+            "Arrival Date",
+            "Status",
+            "Image URL",
+        ]
+        for col_num, header_title in enumerate(headers, 1):
+            sheet.cell(row=1, column=col_num).value = header_title
+
+        for row_num, wood in enumerate(wood_inventories, 2):
+            sheet.cell(row=row_num, column=1).value = wood.id
+            sheet.cell(row=row_num, column=2).value = wood.wood_type
+            sheet.cell(row=row_num, column=3).value = wood.grade
+            sheet.cell(row=row_num, column=4).value = wood.quantity
+            sheet.cell(row=row_num, column=5).value = wood.unit_price
+            sheet.cell(row=row_num, column=6).value = wood.source
+            sheet.cell(row=row_num, column=7).value = (
+                wood.arrival_date.strftime("%Y-%m-%d") if wood.arrival_date else ""
+            )
+            sheet.cell(row=row_num, column=8).value = wood.status
+            sheet.cell(row=row_num, column=9).value = (
+                request.build_absolute_uri(wood.image.url) if wood.image else ""
+            )
+        workbook.save(response)
+        return response
+
     if request.method == "POST":
         form = WoodInventoryForm(request.POST, request.FILES)
         if form.is_valid():
@@ -287,6 +461,29 @@ def manage_processing_units(request):
 
     if search_query:
         processing_units = processing_units.filter(Q(name__icontains=search_query))
+
+    if request.GET.get("export") == "excel":
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response["Content-Disposition"] = 'attachment; filename="processing_units.xlsx"'
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = "Processing Units"
+
+        headers = ["ID", "Name", "Description", "Capacity", "Status"]
+        for col_num, header_title in enumerate(headers, 1):
+            sheet.cell(row=1, column=col_num).value = header_title
+
+        for row_num, unit in enumerate(processing_units, 2):
+            sheet.cell(row=row_num, column=1).value = unit.id
+            sheet.cell(row=row_num, column=2).value = unit.name
+            sheet.cell(row=row_num, column=3).value = unit.description
+            sheet.cell(row=row_num, column=4).value = unit.capacity
+            sheet.cell(row=row_num, column=5).value = unit.status
+
+        workbook.save(response)
+        return response
 
     if request.method == "POST":
         form = ProcessingUnitForm(request.POST)
@@ -349,6 +546,43 @@ def manage_production_logs(request):
     if search_query:
         production_logs = production_logs.filter(Q(status__icontains=search_query))
 
+    if request.GET.get("export") == "excel":
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response["Content-Disposition"] = 'attachment; filename="production_logs.xlsx"'
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = "Production Logs"
+
+        headers = [
+            "ID",
+            "Wood Inventory",
+            "Quantity Processed",
+            "Processing Unit",
+            "Employee",
+            "Processing Date",
+            "Status",
+            "Remarks",
+        ]
+        for col_num, header_title in enumerate(headers, 1):
+            sheet.cell(row=1, column=col_num).value = header_title
+
+        for row_num, log in enumerate(production_logs, 2):
+            sheet.cell(row=row_num, column=1).value = log.id
+            sheet.cell(row=row_num, column=2).value = str(log.wood_inventory)
+            sheet.cell(row=row_num, column=3).value = log.quantity_processed
+            sheet.cell(row=row_num, column=4).value = str(log.processing_unit)
+            sheet.cell(row=row_num, column=5).value = str(log.employee) if log.employee else ""
+            sheet.cell(row=row_num, column=6).value = (
+                log.processing_date.strftime("%Y-%m-%d") if log.processing_date else ""
+            )
+            sheet.cell(row=row_num, column=7).value = log.status
+            sheet.cell(row=row_num, column=8).value = log.remarks
+
+        workbook.save(response)
+        return response
+
     if request.method == "POST":
         form = ProductionLogForm(request.POST)
         if form.is_valid():
@@ -407,6 +641,45 @@ def manage_machineries(request):
 
     # Get the search query and search_by from the request's GET parameters
     search_query = request.GET.get("search", "")
+
+    if request.GET.get("export") == "excel":
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response["Content-Disposition"] = 'attachment; filename="machineries.xlsx"'
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = "Machineries"
+
+        headers = [
+            "ID",
+            "Name",
+            "Processing Unit",
+            "Description",
+            "Status",
+            "Purchase Date",
+            "Last Maintenance Date",
+        ]
+        for col_num, header_title in enumerate(headers, 1):
+            sheet.cell(row=1, column=col_num).value = header_title
+
+        for row_num, machine in enumerate(machineries, 2):
+            sheet.cell(row=row_num, column=1).value = machine.id
+            sheet.cell(row=row_num, column=2).value = machine.name
+            sheet.cell(row=row_num, column=3).value = str(machine.processing_unit)
+            sheet.cell(row=row_num, column=4).value = machine.description
+            sheet.cell(row=row_num, column=5).value = machine.status
+            sheet.cell(row=row_num, column=6).value = (
+                machine.purchase_date.strftime("%Y-%m-%d") if machine.purchase_date else ""
+            )
+            sheet.cell(row=row_num, column=7).value = (
+                machine.last_maintenance_date.strftime("%Y-%m-%d")
+                if machine.last_maintenance_date
+                else ""
+            )
+
+        workbook.save(response)
+        return response
 
     if search_query:
         machineries = machineries.filter(
@@ -470,6 +743,47 @@ def manage_orders(request):
 
     # Get the search query and search_by from the request's GET parameters
     search_query = request.GET.get("search", "")
+
+    if request.GET.get("export") == "excel":
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response["Content-Disposition"] = 'attachment; filename="orders.xlsx"'
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = "Orders"
+
+        headers = [
+            "ID",
+            "Order Number",
+            "Client",
+            "User",
+            "Order Date",
+            "Status",
+            "Payment Method",
+            "Total Cost (LAK)",
+            "Description",
+        ]
+        for col_num, header_title in enumerate(headers, 1):
+            sheet.cell(row=1, column=col_num).value = header_title
+
+        for row_num, order_obj in enumerate(orders, 2):
+            sheet.cell(row=row_num, column=1).value = order_obj.id
+            sheet.cell(row=row_num, column=2).value = order_obj.order_number
+            sheet.cell(row=row_num, column=3).value = (
+                str(order_obj.client) if order_obj.client else ""
+            )
+            sheet.cell(row=row_num, column=4).value = str(order_obj.user) if order_obj.user else ""
+            sheet.cell(row=row_num, column=5).value = (
+                order_obj.order_date.strftime("%Y-%m-%d %H:%M:%S") if order_obj.order_date else ""
+            )
+            sheet.cell(row=row_num, column=6).value = order_obj.status
+            sheet.cell(row=row_num, column=7).value = order_obj.payment_method
+            sheet.cell(row=row_num, column=8).value = order_obj.total_cost
+            sheet.cell(row=row_num, column=9).value = order_obj.description
+
+        workbook.save(response)
+        return response
 
     if search_query:
         orders = orders.filter(

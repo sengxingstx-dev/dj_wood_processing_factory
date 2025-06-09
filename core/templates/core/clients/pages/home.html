@@ -8,74 +8,227 @@
   {% include "core/clients/partials/carousel.html" %}
   <div class="container mx-auto">
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-2">
-  {% for wood in wood_inventories %}
-  <div class="w-full h-[] flex flex-col bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700">
-    <!-- Image section -->
-    <div class="h-48 overflow-hidden rounded-t-lg">
-      <a href="#" class="block relative h-full">
-        <img class="w-full h-full object-cover"
-             src="{% if wood.image %}{{ wood.image.url }}{% else %}{% static 'accounts/assets/images/default.jpg' %}{% endif %}"
-             alt="{{ wood.wood_type }} inventory image" width="" height="">
-      </a>
-    </div>
-
-    <!-- Content section -->
-    <div class="p-5 flex flex-col flex-1">
-      <h5 class="mb-3 text-2xl font-bold text-gray-900 dark:text-white">
-        {{ wood.wood_type }} <span class="text-lg">(Grade {{ wood.grade }})</span>
-      </h5>
-      
-      <div class="grid grid-cols-2 gap-2 mb-4">
-        <div class="flex items-center">
-          <svg class="w-4 h-4 mr-2 text-gray-500 dark:text-white-400" fill="currentColor" viewBox="0 0 20 20">
-            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
-            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
-          </svg>
-          <span class="text-sm dark:text-white">{{ wood.quantity }} m³</span>
+      {% for wood in wood_inventories %}
+        <div class="w-full flex flex-col bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700">
+          <!-- Image section -->
+          <div class="h-48 overflow-hidden rounded-t-lg">
+            <a href="javascript:void(0);"
+               onclick="openImageModal('{% if wood.image %}{{ wood.image.url }}{% else %}{% static 'assets/images/placeholder.jpg' %}{% endif %}')"
+               class="block relative h-full cursor-pointer">
+              <img class="w-full h-full object-cover"
+                   src="{% if wood.image %}{{ wood.image.url }}{% else %}{% static 'assets/images/placeholder.jpg' %}{% endif %}"
+                   alt="{{ wood.wood_type }} inventory image"
+                   width=""
+                   height="">
+            </a>
+          </div>
+          <!-- Content section -->
+          <div class="p-5 flex flex-col flex-1">
+            <h5 class="mb-3 text-2xl font-bold text-gray-900 dark:text-white">
+              {{ wood.wood_type }} <span class="text-lg">(Grade {{ wood.grade }})</span>
+            </h5>
+            <div class="grid grid-cols-2 gap-2 mb-4">
+              <div class="flex items-center">
+                <svg class="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400"
+                     fill="currentColor"
+                     viewBox="0 0 20 20">
+                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                  <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                </svg>
+                <span class="text-sm dark:text-white">{{ wood.quantity }} m³</span>
+              </div>
+              <div class="flex items-center">
+                <svg class="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400"
+                     fill="none"
+                     stroke="currentColor"
+                     viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="text-sm dark:text-white">LAK {{ wood.unit_price|intcomma }}</span>
+              </div>
+              <div class="col-span-2 flex items-center">
+                <svg class="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400"
+                     fill="none"
+                     stroke="currentColor"
+                     viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+                <span class="text-sm truncate dark:text-white" title="{{ wood.source }}">{{ wood.source }}</span>
+              </div>
+              <div class="col-span-2 flex items-center">
+                <svg class="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400"
+                     fill="none"
+                     stroke="currentColor"
+                     viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span class="text-sm dark:text-white">{{ wood.arrival_date|date:"M d, Y" }}</span>
+              </div>
+            </div>
+            <!-- Status badge -->
+            <div class="mt-auto">
+              <div class="flex items-center justify-between">
+                <span class="px-3 py-1 text-sm rounded-full {% if wood.status == 'Available' %}bg-green-100 text-green-800 {% elif wood.status == 'Reserved' %}bg-yellow-100 text-yellow-800 {% else %}bg-gray-100 text-gray-800{% endif %}">
+                  {{ wood.status }}
+                </span>
+                <a href="javascript:void(0);"
+                   onclick="openContactModal()"
+                   class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600 cursor-pointer">
+                  ຕິດຕໍ່ (ສັ່ງຊື້)
+                  <svg class="w-3.5 h-3.5 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
-        
-        <div class="flex items-center">
-          <svg class="w-4 h-4 mr-2 text-gray-500 dark:text-white-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-          <span class="text-sm dark:text-white">LAK {{ wood.unit_price|intcomma }}</span>
+        <!-- MODALS -->
+        <!-- Image Modal -->
+        <div id="imageModal"
+             class="fixed inset-0 z-[100] hidden items-center justify-center bg-black bg-opacity-75 p-4 transition-opacity duration-300 ease-in-out"
+             style="backdrop-filter: blur(4px)">
+          <div class="relative max-w-4xl max-h-[90vh] bg-white dark:bg-gray-900 rounded-lg shadow-xl overflow-hidden">
+            <img id="modalImage"
+                 src=""
+                 alt="Full size image"
+                 class="block w-full h-full object-contain"
+                 width=""
+                 height="">
+            <button onclick="closeImageModal()"
+                    title="Close (Esc)"
+                    class="absolute top-3 right-3 text-gray-300 bg-gray-800 bg-opacity-50 hover:bg-opacity-75 rounded-full p-1.5 focus:outline-none focus:ring-2 focus:ring-gray-400">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
         </div>
-
-        <div class="col-span-2 flex items-center">
-          <svg class="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
-          </svg>
-          <span class="text-sm truncate dark:text-white" title="{{ wood.source }}">{{ wood.source }}</span>
+        <!-- Contact Modal -->
+        <div id="contactModal"
+             class="fixed inset-0 z-[100] hidden items-center justify-center bg-black bg-opacity-75 p-4 transition-opacity duration-300 ease-in-out"
+             style="backdrop-filter: blur(4px)">
+          <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md">
+            <div class="flex justify-between items-center p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+              <h3 class="text-xl font-semibold text-gray-900 dark:text-white">ສອບຖາມຂໍ້ມູນການສັ່ງຊື້</h3>
+              <button type="button"
+                      onclick="closeContactModal()"
+                      title="Close (Esc)"
+                      class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white">
+                <svg class="w-3 h-3"
+                     aria-hidden="true"
+                     xmlns="http://www.w3.org/2000/svg"
+                     fill="none"
+                     viewBox="0 0 14 14">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                </svg>
+                <span class="sr-only">Close modal</span>
+              </button>
+            </div>
+            <div class="p-4 md:p-5 space-y-4 text-gray-700 dark:text-gray-300">
+              <p>ຕີດຕໍ່ພວກເຮົາຜ່ານຊ່ອງທາງ:</p>
+              <p>
+                <strong>ໂທລະສັບ (Phone):</strong> <a href="tel:+8562055555555"
+    class="text-blue-600 hover:underline dark:text-blue-400">+856 20 5555 5555</a>
+              </p>
+              <p>
+                <strong>WhatsApp:</strong> <a href="https://wa.me/856XXXXXXXXX"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="inline-flex items-center text-green-500 hover:underline dark:text-green-400">
+                  <img src="{% static 'core/assets/icons/whatsapp.svg' %}"
+                       alt="WhatsApp"
+                       class="w-5 h-5 mr-2"
+                       width=""
+                       height="">
+                  Chat on WhatsApp
+                </a>
+              </p>
+              <p>
+                <strong>Facebook:</strong> <a href="https://facebook.com/yourpage"
+    target="_blank"
+    rel="noopener noreferrer"
+    class="inline-flex items-center text-blue-700 hover:underline dark:text-blue-500">
+                  <img src="{% static 'core/assets/icons/facebook.svg' %}"
+                       alt="Facebook"
+                       class="w-5 h-5 mr-2"
+                       width=""
+                       height="">
+                  Visit our Facebook Page
+                </a>
+              </p>
+              <p>
+                <strong>Email:</strong> <a href="mailto:contact@ywoodfactory.com"
+    class="text-purple-600 hover:underline dark:text-purple-400">contact@ywoodfactory.com</a>
+              </p>
+              <p class="text-sm">ສະຖານທີໂຮງງານປຸງແຕ່ງໄມ້ປະສານເຫຼົ່າຫຼວງພະບາງ ບ້ານ ຜາສຸກ ເມືອງ ແລະ ແຂວງ ຫຼວງພະບາງ.</p>
+            </div>
+          </div>
         </div>
-
-        <div class="col-span-2 flex items-center">
-          <svg class="w-4 h-4 mr-2 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-          </svg>
-          <span class="text-sm dark:text-white">{{ wood.arrival_date|date:"M d, Y" }}</span>
-        </div>
-      </div>
-
-      <!-- Status badge -->
-      <div class="mt-auto">
-        <div class="flex items-center justify-between">
-          <span class="px-3 py-1 text-sm rounded-full 
-              {% if wood.status == 'Available' %}bg-green-100 text-green-800
-              {% elif wood.status == 'Reserved' %}bg-yellow-100 text-yellow-800
-              {% else %}bg-gray-100 text-gray-800{% endif %}">
-            {{ wood.status }}
-          </span>
-          <a href="#" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600">
-            ຈອງ (ຕິດຕໍ່)
-            <svg class="w-3.5 h-3.5 ml-2" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"/>
-            </svg>
-          </a>
-        </div>
-      </div>
+        <!-- END OF MODALS-->
+      {% endfor %}
     </div>
   </div>
-  {% endfor %}
-</div>
-  </div>
+  <!-- Script Sections -->
+  <script>
+    const imageModal = document.getElementById('imageModal');
+    const modalImage = document.getElementById('modalImage');
+    const contactModal = document.getElementById('contactModal');
+  
+    function openImageModal(imageUrl) {
+      if (modalImage && imageModal) {
+        modalImage.src = imageUrl;
+        imageModal.classList.remove('hidden');
+        imageModal.classList.add('flex');
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+      }
+    }
+  
+    function closeImageModal() {
+      if (imageModal) {
+        imageModal.classList.add('hidden');
+        imageModal.classList.remove('flex');
+        modalImage.src = ''; // Clear image src
+        document.body.style.overflow = 'auto'; // Restore background scrolling
+      }
+    }
+  
+    function openContactModal() {
+      if (contactModal) {
+        contactModal.classList.remove('hidden');
+        contactModal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+      }
+    }
+  
+    function closeContactModal() {
+      if (contactModal) {
+        contactModal.classList.add('hidden');
+        contactModal.classList.remove('flex');
+        document.body.style.overflow = 'auto';
+      }
+    }
+  
+    // Close modals with Escape key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === "Escape") {
+        if (imageModal && !imageModal.classList.contains('hidden')) {
+          closeImageModal();
+        }
+        if (contactModal && !contactModal.classList.contains('hidden')) {
+          closeContactModal();
+        }
+      }
+    });
+  
+    // Close modals when clicking outside the modal content (optional, can be tricky with complex modals)
+    window.addEventListener('click', function(event) {
+      if (event.target == imageModal) {
+        closeImageModal();
+      }
+      if (event.target == contactModal) {
+        closeContactModal();
+      }
+    });
+  </script>
 {% endblock clientcontent %}
