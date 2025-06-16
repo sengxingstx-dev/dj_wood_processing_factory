@@ -7,8 +7,8 @@ from core.utils import wood_inventory_storage
 
 class WoodInventory(BaseModel):
     WOOD_TYPE_CHOICES = [
-        ("Teak", "Teak"),
-        ("Rosewood", "Rosewood"),
+        ("ໄມ້ສັກ", "ໄມ່ສັກ"),
+        ("ໄມ້ດູ່", "ໄມ້ດູ່"),
         ("ໄມ້ປັກເກ້", "ໄມ້ປັກເກ້"),
         ("ໄມ້ບົວ", "ໄມ້ບົວ"),
     ]
@@ -20,9 +20,9 @@ class WoodInventory(BaseModel):
     ]
 
     STATUS_CHOICES = [
-        ("Available", "Available"),
-        ("Reserved", "Reserved"),
-        ("Processed", "Processed"),
+        ("Available", "ຫວ່າງ"),
+        ("Reserved", "ຈອງ"),
+        ("Processed", "ດຳເນິນການແລ້ວ"),
     ]
 
     image = models.ImageField(upload_to=wood_inventory_storage, null=True, blank=True)
@@ -40,9 +40,9 @@ class WoodInventory(BaseModel):
 
 class ProcessingUnit(BaseModel):
     STATUS_CHOICES = [
-        ("Active", "Active"),
-        ("Maintenance", "Maintenance"),
-        ("Idle", "Idle"),
+        ("Active", "ໃຊ້ງານ"),
+        ("Maintenance", "ບຳລຸງຮັກສາ"),
+        ("Idle", "ບໍໄດ້ໃຊ້ງານ"),
     ]
 
     name = models.CharField(max_length=100)
@@ -56,9 +56,9 @@ class ProcessingUnit(BaseModel):
 
 class ProductionLog(BaseModel):
     STATUS_CHOICES = [
-        ("Completed", "Completed"),
-        ("In-Progress", "In-Progress"),
-        ("Faulty", "Faulty"),
+        ("Completed", "ສຳເລັດແລ້ວ"),
+        ("In-Progress", "ກຳລັງດຳເນີນການ"),
+        ("Faulty", "ລົ້ມເຫຼວ"),
     ]
 
     wood_inventory = models.ForeignKey(
@@ -81,9 +81,9 @@ class ProductionLog(BaseModel):
 
 class Machinery(BaseModel):
     STATUS_CHOICES = [
-        ("Operational", "Operational"),
-        ("Maintenance", "Maintenance"),
-        ("Non-functional", "Non-functional"),
+        ("Operational", "ພ້ອມໃຊ້ງານ"),
+        ("Maintenance", "ບຳລຸງຮັກສາ"),
+        ("Non-functional", "ໃຊ້ງານບໍໄດ້"),
     ]
 
     name = models.CharField(max_length=100)

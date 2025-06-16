@@ -50,7 +50,10 @@
                           required>
                     <option value="" selected>ເລືອກໄມ້</option>
                     {% for wood in wood_inventories %}
-                      <option value="{{ wood.id }}">{{ wood.wood_type }} - {{ wood.grade }}</option>
+                      {% comment %} <option value="{{ wood.id }}">{{ wood.wood_type }} - {{ wood.grade }}</option> {% endcomment %}
+                      <option value="{{ wood.id }}" data-price="{{ wood.unit_price }}">
+                        {{ wood.wood_type }} - {{ wood.grade }} ({{ wood.quantity }}m³)
+                      </option>
                     {% endfor %}
                   </select>
                 </div>
@@ -61,7 +64,8 @@
                          name="qty"
                          class="qty-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                          placeholder="Qty"
-                         required>
+                         required
+                         value="1">
                 </div>
                 <div>
                   <label for="price_per_unit"
@@ -70,7 +74,8 @@
                          name="price_per_unit"
                          class="price-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                          placeholder="Price"
-                         required>
+                         required
+                         readonly>
                 </div>
                 <div class="flex items-end">
                   <button type="button"
@@ -135,6 +140,24 @@
         const container = document.getElementById('order-details-container');
         let rowCounter = 1;
 
+        function handleWoodSelectionChange(event) {
+          const selectedOption = event.target.options[event.target.selectedIndex];
+          const price = selectedOption.getAttribute('data-price');
+          const row = event.target.closest('.order-detail-row');
+          const priceInput = row.querySelector('.price-input');
+          if (priceInput && price) {
+              priceInput.value = parseFloat(price).toFixed(0); // Ensure it's a number, toFixed(0) for whole number
+          } else if (priceInput) {
+              priceInput.value = '';
+          }
+      }
+
+      container.addEventListener('change', function(event) {
+          if (event.target.classList.contains('wood-inventory-select')) {
+              handleWoodSelectionChange(event);
+          }
+      });
+
         addRowButton.addEventListener('click', function() {
             rowCounter++;
             const newRow = document.createElement('div');
@@ -145,17 +168,17 @@
                     <select name="wood_inventory" id="wood_inventory_${rowCounter}" class="wood-inventory-select bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" required>
                         <option value="" selected>Select Wood</option>
                         {% for wood in wood_inventories %}
-                            <option value="{{ wood.id }}">{{ wood.wood_type }} - {{ wood.grade }}</option>
+                            <option value="{{ wood.id }}" data-price="{{ wood.unit_price }}">{{ wood.wood_type }} - {{ wood.grade }} ({{ wood.quantity }}m³)</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div>
                     <label for="qty_${rowCounter}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Quantity</label>
-                    <input type="number" name="qty" id="qty_${rowCounter}" class="qty-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Qty" required>
+                    <input type="number" name="qty" id="qty_${rowCounter}" value="1" class="qty-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Qty" required>
                 </div>
                 <div>
                     <label for="price_per_unit_${rowCounter}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price/Unit</label>
-                    <input type="number" name="price_per_unit" id="price_per_unit_${rowCounter}" class="price-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Price" required>
+                    <input type="number" name="price_per_unit" id="price_per_unit_${rowCounter}" class="price-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Price" required readonly>
                 </div>
                 <div class="flex items-end">
                     <button type="button" class="remove-order-detail-row text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
@@ -168,10 +191,16 @@
             container.appendChild(newRow);
         });
 
-        container.addEventListener('click', function(event) {
+        // Consolidate remove logic into the delegated event listener
+        container.addEventListener('click', function(event) { // Changed from 'input' to 'click' for remove button
             if (event.target.closest('.remove-order-detail-row')) {
                 const row = event.target.closest('.order-detail-row');
-                row.remove();
+                // row.remove();
+                if (container.querySelectorAll('.order-detail-row').length > 1) { // Prevent removing the last row
+                  row.remove();
+              } else {
+                  alert("At least one order item is required.");
+              }
             }
         });
     });

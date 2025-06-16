@@ -75,7 +75,7 @@
           </tr>
         </thead>
         {% if wood_inventories %}
-        <tbody>
+          <tbody>
             {% for wood in wood_inventories %}
               <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                 <td class="px-6 py-4">{{ forloop.counter }}</td>
@@ -97,7 +97,15 @@
                 <td class="px-6 py-4">LAK{{ wood.unit_price|intcomma }}</td>
                 <td class="px-6 py-4">{{ wood.source }}</td>
                 <td class="px-6 py-4">{{ wood.arrival_date|date:'d/m/Y' }}</td>
-                <td class="px-6 py-4">{{ wood.status }}</td>
+                <td class="px-6 py-4">
+                  {% if wood.status == 'Available' %}
+                    ຫວ່າງ
+                  {% elif wood.status == 'Reserved' %}
+                    ຈອງ
+                  {% else %}
+                    ດຳເນິນການແລ້ວ
+                  {% endif %}
+                </td>
                 <td class="px-6 py-4">
                   <!-- Modal toggle -->
                   <a href="#"
@@ -112,7 +120,6 @@
                      class="font-medium text-red-600 dark:text-red-500 hover:underline">ລືບ</a>
                   <!-- Edit wood modal -->
                   {% include "core/dashboard/modals/edit/edit-wood-modal.html" %}
-
                   <!-- Delete wood modal -->
                   <form action="{% url 'delete-wood-inventory' wood.id %}" method="post">
                     {% csrf_token %}
@@ -122,11 +129,11 @@
               </tr>
             {% endfor %}
           </tbody>
-          {% else %}
-            <tr class="bg-white text-center border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-              <td class="w-4 p-4" colspan="9">ບໍ່ມີຂໍ້ມູນ</td>
-            </tr>
-          {% endif %}
+        {% else %}
+          <tr class="bg-white text-center border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+            <td class="w-4 p-4" colspan="9">ບໍ່ມີຂໍ້ມູນ</td>
+          </tr>
+        {% endif %}
       </table>
     </div>
     {% include "core/dashboard/partials/pagination.html" %}

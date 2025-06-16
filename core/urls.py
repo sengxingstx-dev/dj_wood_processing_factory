@@ -108,5 +108,8 @@ urlpatterns = [
     ),
     #
     path("dashboard/manage-products/", core_views.manage_products, name="manage-products"),
+    # Reports
+    path("dashboard/revenue-report/", core_views.revenue_report, name="revenue-report"),
+    # Accounts
     path("accounts/", include("accounts.urls")),
 ]

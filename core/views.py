@@ -943,6 +943,68 @@ def delete_order(request, pk):
 
 
 @login_required
+def revenue_report(request):
+    orders_qs = Order.objects.filter(status=Order.OrderStatus.COMPLETED).order_by("-order_date")
+
+    # Get filter parameters
+    filter_day = request.GET.get("day", "")
+    filter_month = request.GET.get("month", "")
+    filter_year = request.GET.get("year", "")
+
+    current_filters = {}
+
+    if filter_year:
+        try:
+            orders_qs = orders_qs.filter(order_date__year=int(filter_year))
+            current_filters["year"] = filter_year
+        except ValueError:
+            messages.error(request, "Invalid year format.")
+    if filter_month:
+        try:
+            orders_qs = orders_qs.filter(order_date__month=int(filter_month))
+            current_filters["month"] = filter_month
+        except ValueError:
+            messages.error(request, "Invalid month format.")
+    if filter_day:
+        try:
+            orders_qs = orders_qs.filter(order_date__day=int(filter_day))
+            current_filters["day"] = filter_day
+        except ValueError:
+            messages.error(request, "Invalid day format.")
+
+    total_revenue = orders_qs.aggregate(Sum("total_cost"))["total_cost__sum"] or 0
+
+    if request.GET.get("export") == "excel":
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response["Content-Disposition"] = 'attachment; filename="revenue_report.xlsx"'
+        workbook = Workbook()
+        sheet = workbook.active
+        sheet.title = "Revenue Report"
+
+        headers = ["Order Number", "Client", "Order Date", "Payment Method", "Total Cost (LAK)"]
+        for col_num, header_title in enumerate(headers, 1):
+            sheet.cell(row=1, column=col_num).value = header_title
+
+        for row_num, order in enumerate(orders_qs, 2):
+            sheet.cell(row=row_num, column=1).value = order.order_number
+            sheet.cell(row=row_num, column=2).value = order.client.name if order.client else "N/A"
+            sheet.cell(row=row_num, column=3).value = order.order_date.strftime("%Y-%m-%d %H:%M:%S")
+            sheet.cell(row=row_num, column=4).value = order.get_payment_method_display()
+            sheet.cell(row=row_num, column=5).value = order.total_cost
+        workbook.save(response)
+        return response
+
+    context = {
+        "orders": orders_qs,
+        "total_revenue": total_revenue,
+        "current_filters": current_filters,
+    }
+    return render(request, "core/dashboard/pages/revenue-report.html", context)
+
+
+@login_required
 def manage_products(request):
     context = {
         "delete_confirm_msg": "Are you sure you want to delete this product?",

@@ -59,6 +59,7 @@
                       <option value="" selected>Select Wood</option>
                       {% for wood in wood_inventories %}
                         <option value="{{ wood.id }}"
+                                data-price="{{ wood.unit_price }}"
                                 {% if wood == detail.wood_inventory %}selected{% endif %}>
                           {{ wood.wood_type }} - {{ wood.grade }}
                         </option>
@@ -84,7 +85,8 @@
                            id="price_per_unit_{{ detail.id }}"
                            class="price-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                            placeholder="Price"
-                           value="{{ detail.price_per_unit }}"
+                           value="{{ detail.price_per_unit|floatformat:0 }}"
+                           readonly
                            required>
                   </div>
                   <div>
@@ -94,7 +96,7 @@
                            name="total_price"
                            id="total_price_{{ detail.id }}"
                            class="total-price-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                           placeholder="Total Price"
+                           placeholder="Total"
                            value="{{ detail.total_price }}"
                            readonly>
                   </div>
@@ -187,12 +189,26 @@
             if (qtyInput && priceInput && totalPriceInput) {
                 const qty = parseFloat(qtyInput.value) || 0;
                 const price = parseFloat(priceInput.value) || 0;
-                totalPriceInput.value = (qty * price).toFixed(2);
+                totalPriceInput.value = (qty * price).toFixed(0);
             }
         }
 
+        function handleWoodSelectionChangeEdit(eventTarget) {
+          const selectedOption = eventTarget.options[eventTarget.selectedIndex];
+          const price = selectedOption.getAttribute('data-price');
+          const row = event.target.closest('.order-detail-row');
+          const priceInput = row.querySelector('.price-input');
+          if (priceInput && price) {
+              priceInput.value = parseFloat(price).toFixed(0);
+          } else if (priceInput) {
+              priceInput.value = '';
+          }
+          updateTotalPrice(row);
+      }
+
+
         container.addEventListener('input', function(event) {
-            if (event.target.classList.contains('qty-input') || event.target.classList.contains('price-input')) {
+            if (event.target.classList.contains('qty-input')) {
                 const row = event.target.closest('.order-detail-row');
                 updateTotalPrice(row);
             }
@@ -212,7 +228,7 @@
                     <select name="wood_inventory" id="wood_inventory_${rowCounter}" class="wood-inventory-select bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" required>
                         <option value="" selected>Select Wood</option>
                         {% for wood in wood_inventories %}
-                            <option value="{{ wood.id }}">{{ wood.wood_type }} - {{ wood.grade }}</option>
+                            <option value="{{ wood.id }}" data-price="{{ wood.unit_price }}">{{ wood.wood_type }} - {{ wood.grade }} ({{ wood.quantity }}m³)</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -222,11 +238,11 @@
                 </div>
                 <div>
                     <label for="price_per_unit_${rowCounter}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Price/Unit</label>
-                    <input type="number" name="price_per_unit" id="price_per_unit_${rowCounter}" class="price-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Price" required>
+                    <input type="number" name="price_per_unit" id="price_per_unit_${rowCounter}" class="price-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Price" required readonly>
                 </div>
                 <div>
                     <label for="total_price_${rowCounter}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Total Price</label>
-                    <input type="number" name="total_price" id="total_price_${rowCounter}" class="total-price-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Total Price" readonly>
+                    <input type="number" name="total_price" id="total_price_${rowCounter}" class="total-price-input bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Total" readonly>
                 </div>
                 <div class="flex items-end">
                     <button type="button" class="remove-order-detail-row text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
@@ -237,14 +253,25 @@
                 </div>
             `;
             container.appendChild(newRow);
-            updateTotalPrice(newRow);
+            // updateTotalPrice(newRow); // Price will be zero until wood is selected
         });
 
-        container.addEventListener('click', function(event) {
+        container.addEventListener('click', function(event) { // For remove button
             if (event.target.closest('.remove-order-detail-row')) {
                 const row = event.target.closest('.order-detail-row');
-                row.remove();
+                // row.remove();
+                if (container.querySelectorAll('.order-detail-row').length > 1) {
+                  row.remove();
+              } else {
+                  alert("At least one order item is required.");
+              }
             }
         });
+
+        container.addEventListener('change', function(event) { // For wood selection
+          if (event.target.classList.contains('wood-inventory-select')) {
+              handleWoodSelectionChangeEdit(event.target);
+          }
+      });
     });
 </script>

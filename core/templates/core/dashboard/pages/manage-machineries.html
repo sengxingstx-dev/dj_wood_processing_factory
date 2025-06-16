@@ -86,7 +86,7 @@
                 <td class="px-6 py-4">{{ machinery.description }}</td>
                 <td class="px-6 py-4">{{ machinery.status }}</td>
                 <td class="px-6 py-4">{{ machinery.purchase_date|date:'d/m/Y' }}</td>
-                <td class="px-6 py-4">{{ machinery.last_maintenance_date|date:'d/m/Y' }}</td>
+                <td class="px-6 py-4">{% if machinery.last_maintenance_date %} {{ machinery.last_maintenance_date|date:'d/m/Y' }} {% else %} -- {% endif %}</td>
                 <td class="px-6 py-4">
                   <!-- Modal toggle -->
                   <a href="#"

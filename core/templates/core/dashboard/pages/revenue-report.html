@@ -1,0 +1,124 @@
+{% extends "core/dashboard/base.html" %}
+{% load static %}
+{% load humanize %}
+{% block title %}
+  Admin | Revenue Report
+{% endblock title %}
+{% block admincontent %}
+  <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
+    <h1 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">ລາຍງານລາຍຮັບ</h1>
+    <!-- Filter Form -->
+    <form method="get"
+          action="{% url 'revenue-report' %}"
+          class="mb-6 p-4 bg-white dark:bg-gray-800 rounded-lg shadow">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+        <div>
+          <label for="year"
+                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ປີ (Year):</label>
+          <input type="number"
+                 name="year"
+                 id="year"
+                 value="{{ current_filters.year|default_if_none:'' }}"
+                 placeholder="YYYY"
+                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        </div>
+        <div>
+          <label for="month"
+                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ເດືອນ (Month):</label>
+          <select name="month"
+                  id="month"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+            <option value="">-- ທັງໝົດ --</option>
+            {% for i in "123456789012"|make_list %}
+              <option value="{{ forloop.counter }}"
+                      {% if current_filters.month == forloop.counter|stringformat:"s" %}selected{% endif %}>
+                {{ forloop.counter }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label for="day"
+                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">ວັນ (Day):</label>
+          <input type="number"
+                 name="day"
+                 id="day"
+                 value="{{ current_filters.day|default_if_none:'' }}"
+                 placeholder="DD"
+                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+        </div>
+        <div class="flex space-x-2">
+          <button type="submit"
+                  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+            ຄົ້ນຫາ
+          </button>
+          <a href="{% url 'revenue-report' %}"
+             class="text-gray-900 bg-white hover:bg-gray-100 border border-gray-300 focus:ring-4 focus:outline-none focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700">
+            ລ້າງການຄົ້ນຫາ
+          </a>
+        </div>
+      </div>
+    </form>
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+      <div class="flex items-center justify-between flex-column md:flex-row flex-wrap space-y-4 md:space-y-0 py-4 bg-white dark:bg-gray-900">
+        <div class="pl-2">
+          <a href="?export=excel{% if current_filters.year %}&year={{ current_filters.year }}{% endif %}{% if current_filters.month %}&month={{ current_filters.month }}{% endif %}{% if current_filters.day %}&day={{ current_filters.day }}{% endif %}"
+             class="text-white bg-green-500 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">
+            <svg class="me-1 -ms-1 w-5 h-5"
+                 fill="currentColor"
+                 viewBox="0 0 20 20"
+                 xmlns="http://www.w3.org/2000/svg"
+                 aria-hidden="true">
+              <path clip-rule="evenodd" fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v4.59L7.3 9.7a.75.75 0 00-1.1 1.02l3.25 3.5a.75.75 0 001.1 0l3.25-3.5a.75.75 0 10-1.1-1.02l-1.95 2.1V6.75z">
+              </path>
+            </svg>
+            ດາວໂຫລດ Excel
+          </a>
+        </div>
+        <div class="pr-2 text-lg font-semibold text-gray-900 dark:text-white">ລາຍຮັບລວມ: LAK {{ total_revenue|intcomma }}</div>
+      </div>
+      <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr class="lao-table-header">
+            <th scope="col" class="px-6 py-3">#</th>
+            <th scope="col" class="px-6 py-3">ລະຫັດອໍເດີ</th>
+            <th scope="col" class="px-6 py-3">ລູກຄ້າ</th>
+            <th scope="col" class="px-6 py-3">ວັນທີ່ອໍເດີ</th>
+            <th scope="col" class="px-6 py-3">ວິທີຊຳລະເງິນ</th>
+            <th scope="col" class="px-6 py-3 text-right">ລວມເງິນ (LAK)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if orders %}
+            {% for order in orders %}
+              <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                <td class="px-6 py-4">{{ forloop.counter }}</td>
+                <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                  <a href="{% url 'view-order' order.id %}" class="hover:underline">{{ order.order_number }}</a>
+                </td>
+                <td class="px-6 py-4">{{ order.client.name|default:"N/A" }}</td>
+                <td class="px-6 py-4">{{ order.order_date|date:"d M Y, H:i" }}</td>
+                <td class="px-6 py-4">{{ order.get_payment_method_display }}</td>
+                <td class="px-6 py-4 text-right">{{ order.total_cost|intcomma }}</td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr class="bg-white text-center border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+              <td class="w-4 p-4" colspan="6">ບໍ່ມີຂໍ້ມູນລາຍຮັບໃນໄລຍະທີ່ເລືອກ.</td>
+            </tr>
+          {% endif %}
+        </tbody>
+        {% if orders %}
+          <tfoot>
+            <tr class="font-semibold text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700">
+              <th scope="row" colspan="5" class="px-6 py-3 text-base text-right">ລວມທັງໝົດ</th>
+              <td class="px-6 py-3 text-right text-base">{{ total_revenue|intcomma }}</td>
+            </tr>
+          </tfoot>
+        {% endif %}
+      </table>
+    </div>
+    {% comment %} {% include "core/dashboard/partials/pagination.html" %} {% endcomment %}
+    <!-- Pagination can be added here if needed for large datasets, but for reports, often all filtered data is shown -->
+  </div>
+{% endblock admincontent %}

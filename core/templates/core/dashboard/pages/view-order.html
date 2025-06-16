@@ -58,7 +58,7 @@
         <div class="bg-gray-100 p-4 rounded-lg">
           <h2 class="text-xl font-semibold mb-2 text-gray-700">ລາຍລະອຽດອໍເດີ</h2>
           <p>
-            <span class="font-medium">ຍອດລວມທັງໝົດ:</span> LAK{{ order.total_cost }}
+            <span class="font-medium">ຍອດລວມທັງໝົດ:</span> LAK{{ order.total_cost|intcomma }}
           </p>
           <p>
             <span class="font-medium">ວັນທີ່ສ້າງ:</span> {{ order.created_at|date:'d/m/Y' }}
