@@ -10,7 +10,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 from openpyxl import Workbook
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
 from accounts.models import Account, Client, Employee
@@ -1012,6 +1014,31 @@ def manage_products(request):
     return render(request, "core/dashboard/pages/manage-products.html", context)
 
 
+# Helper function to format currency for PDF
+def format_lao_currency_pdf(value, symbol="LAK"):
+    try:
+        # Format with commas for the integer part, no decimal places
+        formatted_number = "{:,.0f}".format(float(value))
+        return f"{symbol} {formatted_number}"  # Added space after symbol
+    except (ValueError, TypeError):
+        return f"{symbol} {value}"  # Fallback
+
+
+status_translations_pdf = {
+    Order.OrderStatus.PENDING: "ກຳລັງລໍຖ້າ",
+    Order.OrderStatus.COMPLETED: "ສຳເລັດແລ້ວ",
+    Order.OrderStatus.CANCELLED: "ຍົກເລີກແລ້ວ",
+}
+payment_method_translations_pdf = {
+    Order.PaymentMethod.CASH: "ເງິນສົດ",
+    Order.PaymentMethod.TRANSFERRED: "ໂອນເງິນ",
+}
+
+import os
+
+from config.settings import BASE_DIR
+
+
 # PDF generation
 def generate_order_pdf(request, order_id):
     order = get_object_or_404(Order, id=order_id)
@@ -1028,45 +1055,115 @@ def generate_order_pdf(request, order_id):
     # Container for the 'Flowable' objects
     elements = []
 
+    # --- Lao Font Setup ---
+    # IMPORTANT: Replace 'path/to/your/Phetsarath_OT.ttf' with the actual path to your Lao font file.
+    # This font file needs to be accessible by your Django application.
+    # Example: lao_font_path = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Phetsarath_OT.ttf')
+    # Ensure the 'fonts' directory and Phetsarath_OT.ttf exist at that location.
+    lao_font_path = BASE_DIR / "static" / "assets" / "fonts" / "NotoSansLao-Regular.ttf"
+    lao_font_name = "PhetsarathOT"
+
+    try:
+        pdfmetrics.getFont(lao_font_name)
+    except KeyError:
+        if os.path.exists(lao_font_path):
+            pdfmetrics.registerFont(TTFont(lao_font_name, lao_font_path))
+        else:
+            # Log a warning or raise an error if font is not found, as Lao text won't render correctly.
+            print(
+                f"WARNING: Lao font file not found at '{lao_font_path}'. PDF Lao text may not render correctly."
+            )
+            # Fallback to a default font if Lao font is not found to avoid crashing
+            # This means Lao characters might not display.
+            # For production, ensure the font is correctly installed and path is valid.
+            pass  # Allow to proceed, ReportLab will use a default font.
+
     # A large collection of style sheets pre-made for us
     styles = getSampleStyleSheet()
 
+    # Create styles using the Lao font if available, otherwise default
+    if lao_font_name in pdfmetrics.getRegisteredFontNames():
+        styles.add(
+            ParagraphStyle(name="LaoNormal", fontName=lao_font_name, fontSize=10, leading=14)
+        )
+        styles.add(
+            ParagraphStyle(
+                name="LaoHeading1",
+                parent=styles["h1"],
+                fontName=lao_font_name,
+                fontSize=18,
+                leading=22,
+            )
+        )
+        styles.add(
+            ParagraphStyle(
+                name="LaoHeading2",
+                parent=styles["h2"],
+                fontName=lao_font_name,
+                fontSize=14,
+                leading=18,
+            )
+        )
+        styles.add(
+            ParagraphStyle(
+                name="LaoTitle",
+                parent=styles["Title"],
+                fontName=lao_font_name,
+                fontSize=24,
+                leading=28,
+            )
+        )
+        base_font_for_table = lao_font_name
+    else:  # Fallback to default styles if Lao font isn't loaded
+        styles.add(ParagraphStyle(name="LaoNormal", parent=styles["Normal"]))
+        styles.add(ParagraphStyle(name="LaoHeading1", parent=styles["h1"]))
+        styles.add(ParagraphStyle(name="LaoHeading2", parent=styles["h2"]))
+        styles.add(ParagraphStyle(name="LaoTitle", parent=styles["Title"]))
+        base_font_for_table = "Helvetica"  # Default fallback
+
     # Document title
-    elements.append(Paragraph(f"Order #{order.order_number}", styles["Title"]))
+    elements.append(Paragraph(f"ອໍເດີ #{order.order_number}", styles["LaoTitle"]))
     elements.append(Spacer(1, 12))
 
     # Order information
-    elements.append(Paragraph("Order Information", styles["Heading2"]))
-    elements.append(Paragraph(f"Client: {order.client.name}", styles["Normal"]))
-    elements.append(Paragraph(f"Payment Method: {order.payment_method}", styles["Normal"]))
-    elements.append(Paragraph(f"Status: {order.status}", styles["Normal"]))
-    elements.append(Paragraph(f"Total Cost: ${order.total_cost}", styles["Normal"]))
+    display_status = status_translations_pdf.get(order.status, order.status)
+    display_payment_method = payment_method_translations_pdf.get(
+        order.payment_method, order.get_payment_method_display()
+    )
+
+    elements.append(Paragraph("ຂໍ້ມູນອໍເດີ", styles["LaoHeading2"]))
+    elements.append(Paragraph(f"ລູກຄ້າ: {order.client.name}", styles["LaoNormal"]))
+    elements.append(Paragraph(f"ວິທີການຊໍາລະ: {display_payment_method}", styles["LaoNormal"]))
+    elements.append(Paragraph(f"ສະຖານະ: {display_status}", styles["LaoNormal"]))
     elements.append(
-        Paragraph(f"Created At: {order.created_at.strftime('%B %d, %Y %H:%M')}", styles["Normal"])
+        Paragraph(f"ຍອດລວມທັງໝົດ: {format_lao_currency_pdf(order.total_cost)}", styles["LaoNormal"])
     )
     elements.append(
-        Paragraph(f"Updated At: {order.updated_at.strftime('%B %d, %Y %H:%M')}", styles["Normal"])
+        Paragraph(f"ວັນທີສ້າງ: {order.created_at.strftime('%d/%m/%Y %H:%M')}", styles["LaoNormal"])
+    )
+    elements.append(
+        Paragraph(f"ວັນທີແກ້ໄຂ: {order.updated_at.strftime('%d/%m/%Y %H:%M')}", styles["LaoNormal"])
     )
     elements.append(Spacer(1, 12))
 
     if order.description:
-        elements.append(Paragraph("Description", styles["Heading2"]))
-        elements.append(Paragraph(order.description, styles["Normal"]))
+        elements.append(Paragraph("ຄໍາອະທິບາຍ", styles["LaoHeading2"]))
+        elements.append(Paragraph(order.description, styles["LaoNormal"]))
         elements.append(Spacer(1, 12))
 
     # Order items
-    elements.append(Paragraph("Order Items", styles["Heading2"]))
+    elements.append(Paragraph("ລາຍການອໍເດີ", styles["LaoHeading2"]))
 
     # Create table for order items
-    data = [["#", "Wood Inventory", "Quantity", "Price/Unit", "Total Price"]]
+    data = [["#", "ລາຍການໄມ້", "ຈໍານວນ", "ລາຄາ/ໜ່ວຍ", "ລວມເປັນເງິນ"]]
     for index, detail in enumerate(order_details, start=1):
         data.append(
             [
                 str(index),
                 f"{detail.wood_inventory.wood_type} - {detail.wood_inventory.grade}",
                 str(detail.qty),
-                f"${detail.price_per_unit}",
-                f"${detail.total_price}",
+                format_lao_currency_pdf(detail.price_per_unit),
+                format_lao_currency_pdf(detail.total_price),
             ]
         )
 
@@ -1077,13 +1174,22 @@ def generate_order_pdf(request, order_id):
                 ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
                 ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
                 ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                (
+                    "FONTNAME",
+                    (0, 0),
+                    (-1, 0),
+                    (
+                        base_font_for_table
+                        if base_font_for_table == lao_font_name
+                        else base_font_for_table + "-Bold"
+                    ),
+                ),
                 ("FONTSIZE", (0, 0), (-1, 0), 14),
                 ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
                 ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
                 ("TEXTCOLOR", (0, 1), (-1, -1), colors.black),
                 ("ALIGN", (0, 0), (-1, -1), "CENTER"),
-                ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
+                ("FONTNAME", (0, 1), (-1, -1), base_font_for_table),
                 ("FONTSIZE", (0, 1), (-1, -1), 12),
                 ("TOPPADDING", (0, 1), (-1, -1), 6),
                 ("BOTTOMPADDING", (0, 1), (-1, -1), 6),
